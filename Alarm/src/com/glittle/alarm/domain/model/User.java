@@ -16,6 +16,9 @@ public class User extends BaseEntity {
 	@Basic
 	private String email;
 	
+	@Basic
+	private String userId;
+	
 	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	private List<Alarm> alarms;
 
@@ -25,6 +28,14 @@ public class User extends BaseEntity {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}	
+	
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public List<Alarm> getAlarms() {
