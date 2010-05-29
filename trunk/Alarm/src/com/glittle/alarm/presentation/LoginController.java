@@ -1,5 +1,6 @@
 package com.glittle.alarm.presentation;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,15 +8,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.glittle.alarm.infrastructure.persistence.jpa.UserDao;
-import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.glittle.alarm.domain.model.User;
 
 @Controller
 @RequestMapping(value="/login/")
 public class LoginController {
 	
 	private static final String LOGIN_PAGE = "login";
+	private static final Logger LOGGER = Logger.getLogger(LoginController.class);
 	
 	private UserDao userDao;
 	private UserService userService = UserServiceFactory.getUserService();
@@ -28,12 +30,19 @@ public class LoginController {
 	
 	@RequestMapping(value="/success", method=RequestMethod.GET)
 	public String loginSuccess() {		
-		User user = userService.getCurrentUser();		
-		if(user != null) {
-			
+		com.google.appengine.api.users.User apiUser = userService.getCurrentUser();		
+		if(apiUser == null) {
+			return "redirect:/app/login/";
+		}
+		if(apiUser != null) {
+			User user = toUser(apiUser);
+			if(user.isNew() || user.getEmail() != apiUser.getEmail()) {
+				userDao.save(user);
+				LOGGER.info("User with email address "+ user.getEmail()+" is saved");
+			}
 		}
 		
-		return null;
+		return "redirect:/app/alarm/";
 	}
 	
 	@Autowired
@@ -41,7 +50,10 @@ public class LoginController {
 		this.userDao = dao;
 	}
 	
-	private User toUser(User user) {		
-		return null;
+	private User toUser(com.google.appengine.api.users.User apiUser) {		
+		User user = new User();
+		user.setEmail(apiUser.getEmail());
+		user.setUserId(apiUser.getUserId());
+		return user;
 	}
 }
