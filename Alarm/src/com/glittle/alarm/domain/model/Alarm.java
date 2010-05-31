@@ -16,6 +16,9 @@ public class Alarm extends BaseEntity {
 	@Temporal(TemporalType.TIME)
 	private Date time;
 
+	@Basic
+	private User user;
+	
 	public Date getTime() {
 		return time;
 	}
@@ -23,6 +26,12 @@ public class Alarm extends BaseEntity {
 	public void setTime(Date time) {
 		this.time = time;
 	}
-	
-	
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}	
 }

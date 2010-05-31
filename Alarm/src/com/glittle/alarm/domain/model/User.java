@@ -1,5 +1,6 @@
 package com.glittle.alarm.domain.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Basic;
@@ -19,7 +20,7 @@ public class User extends BaseEntity {
 	@Basic
 	private String userId;
 	
-	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@OneToMany(mappedBy="user", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	private List<Alarm> alarms;
 
 	public String getEmail() {
@@ -45,4 +46,11 @@ public class User extends BaseEntity {
 	public void setAlarms(List<Alarm> alarms) {
 		this.alarms = alarms;
 	}	
+	
+	public void addAlarm(Alarm alarm) {
+		if(this.alarms == null) {
+			this.alarms = new ArrayList<Alarm>();
+		}
+		this.alarms.add(alarm);
+	}
 }
