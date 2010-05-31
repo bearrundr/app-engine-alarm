@@ -1,9 +1,13 @@
 package com.glittle.alarm.presentation;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,11 +43,12 @@ public class AlarmController {
 	}
 	
 	@RequestMapping(value="/create", method=RequestMethod.POST)
-	public String create(@RequestParam("time") String time) {
+	public String create(@RequestParam("time") String time) throws ParseException {
 		System.out.println(time);
+		Date alarmTime = new SimpleDateFormat("kk:mm").parse(time);				
 		User user = getCurrentUser();
 		Alarm alarm = new Alarm();
-		alarm.setTime(new Date());
+		alarm.setTime(alarmTime);
 		user.addAlarm(alarm);
 		userDao.save(user);
 		return null;

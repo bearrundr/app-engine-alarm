@@ -19,6 +19,11 @@
 		</script>
 	</head>	
 	<body>
+		<c:forEach items="${alarms}" var="alarm">
+			<c:out value="${alarm.time}"></c:out>
+			<br>		
+		</c:forEach>
+	
 		<a id="add" href="#">Add new Alarm</a>
 		<div style="display:none" id="dialog" title="Add new Alarm">
 			<form action="${ctx}/alarm/create" id="alarm-form">
