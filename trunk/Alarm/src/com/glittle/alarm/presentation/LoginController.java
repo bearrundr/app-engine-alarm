@@ -36,12 +36,11 @@ public class LoginController {
 		}
 		if(apiUser != null) {
 			User user = toUser(apiUser);
-			if(user.isNew() || user.getEmail() != apiUser.getEmail()) {
+			if(userDao.findByUserId(user.getUserId()) == null) {
 				userDao.save(user);
-				LOGGER.info("User with email address "+ user.getEmail()+" is saved");
+				LOGGER.info("User with email address "+ user.getEmail()+" is saved");				
 			}
-		}
-		
+		}		
 		return "redirect:/app/alarm/";
 	}
 	
