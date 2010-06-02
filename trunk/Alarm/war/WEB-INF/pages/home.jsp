@@ -34,8 +34,7 @@
 						$('#counter${status.index}').countdown({until: +${alarm.secondsForNextAlarm}, format:'HMS'});			
 					});		
 		</script>			
-		<br>	
-		<br>		
+		<br><br>	
 		</c:forEach>
 	
 		<div>
