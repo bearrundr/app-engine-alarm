@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,8 +53,7 @@ public class AlarmController {
 		Alarm alarm = new Alarm();
 		alarm.setTime(alarmTime);
 		user.addAlarm(alarm);
-		userDao.save(user);
-				
+		userDao.save(user);				
 		return null;
 	}
 	
