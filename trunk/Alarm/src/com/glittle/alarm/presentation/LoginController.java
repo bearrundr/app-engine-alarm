@@ -24,6 +24,9 @@ public class LoginController {
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public String login(Model model) {
+		if(userService.isUserLoggedIn()) {
+			return "redirect:/app/alarm/";
+		}
 		model.addAttribute("loginUrl", userService.createLoginURL("/app/login/success"));
 		return LOGIN_PAGE;
 	}
