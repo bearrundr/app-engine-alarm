@@ -14,13 +14,17 @@
 		<script src="/js/jquery.countdown.js"></script>
 		<script>
 			$(document).ready(function () {
+				$('#dialog').dialog({ autoOpen: false });
 				$('#datepicker').timepicker();
 				$('#add').click(function() {
-					$('#dialog').dialog();
+					$('#dialog').dialog('open');
 				});	
 				$('#submit').click(function() {
-					$.post('/app/alarm/create', $('#alarm-form').serialize());					
+					$.post('/app/alarm/create', $('#alarm-form').serialize());
+					$('#dialog').dialog('close');	
+					 location.reload();				
 					});
+				
 			});
 		
 		</script>
