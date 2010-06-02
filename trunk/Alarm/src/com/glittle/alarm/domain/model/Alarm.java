@@ -1,12 +1,17 @@
 package com.glittle.alarm.domain.model;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.ramanandi.framework.domain.model.jpa.BaseEntity;
 
 @Entity
@@ -34,4 +39,18 @@ public class Alarm extends BaseEntity {
 	public void setUser(User user) {
 		this.user = user;
 	}	
+	
+	public long getSecondsForNextAlarm() {
+		Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+		DateTime current = new DateTime(cal.getTime());		
+		DateTime alarm = new DateTime(time);
+		alarm = alarm.withDate(current.getYear(), current.getMonthOfYear(), current.getDayOfMonth());
+		if(alarm.isBefore(current)) {
+			alarm = alarm.plusDays(1);
+		}
+		Interval interval = new Interval(current, alarm);
+		Long milli = interval.toDurationMillis();
+		
+		return milli/1000;
+	}
 }

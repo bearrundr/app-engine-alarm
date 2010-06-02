@@ -1,5 +1,6 @@
 package com.glittle.alarm.infrastructure.persistence.jpa;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,12 @@ public class UserDao extends GenericDao<User, String> {
 	public User findByUserId(String userId) {
 		Query q = getEntityManager().createQuery("select from "+User.class.getName()+" user where user.userId = ?1");
 		q.setParameter(1, userId);
-		User u = (User)q.getSingleResult();
+		User u;
+		try {
+			u = (User)q.getSingleResult();
+		}catch(NoResultException e) {
+			u = null;
+		}
 		return u;
 	}
 }
