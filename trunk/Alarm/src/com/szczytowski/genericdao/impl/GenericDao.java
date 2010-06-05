@@ -303,6 +303,12 @@ public class GenericDao<T extends IEntity<I>, I extends Serializable> implements
         entityManager.clear();
     }
 
+
+    public final void flush() {
+        entityManager.flush();        
+    }
+    
+    
     /**
      * Retrieve objects using criteria. It is equivalent to <code>criteria.list(entityManager)</code>.
      *

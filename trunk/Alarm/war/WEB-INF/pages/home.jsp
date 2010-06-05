@@ -4,6 +4,8 @@
 		<style type="text/css">
 			.counter {
 			width: 130px;
+			display: block;
+			margin-bottom: 40px;
 			}
 		</style>
 		<link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/smoothness/jquery-ui.css" rel="Stylesheet" />			
@@ -13,16 +15,49 @@
 		<script src="/js/jquery-ui-timepicker-addon-0.4.min.js"></script>
 		<script src="/js/jquery.countdown.js"></script>
 		<script>
+
+			var alarms = {};
+			
+			alarms.deleteAlarm = function(event) {				
+				var id = $(this).attr('id');						
+				$.post('/app/alarm/delete', 
+					{ alarmId: id },
+					 alarms.deleteSuccess,
+					 "json"	
+				);
+				$("#"+id).fadeOut();
+				$("#counter"+id).countdown('destroy');		
+				
+						
+			};
+			
+			alarms.addAlarmSuccess = function(data) {
+				var counterId = "counter"+data.id; 
+				$("#alarms").append("<a id=\""+data.id+"\" href=\"#\" class=\"delete\">Delete this counter</a>");
+				$("#alarms").append("<div id=\""+counterId+"\" class=\"counter\">New counter</div>");
+				$("#"+counterId).countdown({until: +data.time, format:'HMS'});	
+				$("#"+data.id).click(alarms.deleteAlarm);							
+			};
+
+			alarms.deleteSuccess = function(data) {
+				//alert(data.status);
+			}
+
+			
 			$(document).ready(function () {
+				$(".delete").click(alarms.deleteAlarm);
 				$('#dialog').dialog({ autoOpen: false });
 				$('#datepicker').timepicker();
 				$('#add').click(function() {
 					$('#dialog').dialog('open');
 				});	
 				$('#submit').click(function() {
-					$.post('/app/alarm/create', $('#alarm-form').serialize());
+					$.post('/app/alarm/create', 
+							$('#alarm-form').serialize(),
+							alarms.addAlarmSuccess,
+							"json"	
+						);
 					$('#dialog').dialog('close');	
-					 location.reload();				
 					});
 				
 			});
@@ -30,17 +65,19 @@
 		</script>
 	</head>	
 	<body>	
-		<h3>Your Alarms</h3>	
-		<c:forEach items="${alarms}" var="alarm" varStatus="status">		 	
-			<div id="counter${status.index}" class="counter"></div>
-				<script type="text/javascript">
-					$(function () {
-						$('#counter${status.index}').countdown({until: +${alarm.secondsForNextAlarm}, format:'HMS'});			
-					});		
-		</script>			
+		<h3>Your Alarms</h3>
+		<div id=alarms>	
+			<c:forEach items="${alarms}" var="alarm" varStatus="status">				
+					<a id="${alarm.id}" href="#" class="delete">Delete this alarm</a>		 	
+					<div id="counter${alarm.id}" class="counter"></div>				
+					<script type="text/javascript">
+						$(function () {
+							$('#counter${alarm.id}').countdown({until: +${alarm.secondsForNextAlarm}, format:'HMS'});			
+						});						
+			</script>						
+			</c:forEach>
+		</div>
 		<br><br>	
-		</c:forEach>
-	
 		<div>
 			<a id="add" href="#">Add new Alarm</a>
 		</div>
