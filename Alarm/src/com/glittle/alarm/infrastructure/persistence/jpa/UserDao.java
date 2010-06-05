@@ -21,5 +21,5 @@ public class UserDao extends GenericDao<User, String> {
 			u = null;
 		}
 		return u;
-	}
+	}	
 }

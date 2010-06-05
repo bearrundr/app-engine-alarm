@@ -8,12 +8,17 @@ import java.util.List;
 import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.glittle.alarm.domain.model.Alarm;
 import com.glittle.alarm.domain.model.User;
@@ -21,6 +26,7 @@ import com.glittle.alarm.infrastructure.persistence.jpa.AlarmDao;
 import com.glittle.alarm.infrastructure.persistence.jpa.UserDao;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+
 
 
 @Controller
@@ -43,9 +49,10 @@ public class AlarmController {
 		return HOME_PAGE;
 	}
 	
-	@RequestMapping(value="/create", method=RequestMethod.POST)
-	public String create(@RequestParam("time") String time) throws ParseException {
-		System.out.println(time);
+	@Transactional(propagation=Propagation.REQUIRED)
+	@RequestMapping(value="/create", method=RequestMethod.POST)		
+	public ModelAndView create(@RequestParam("time") String time) throws ParseException {
+		System.out.println(time);		
 		DateFormat dt = new SimpleDateFormat("kk:mm");
 		dt.setTimeZone(TimeZone.getTimeZone("UTC"));
 		Date alarmTime =dt.parse(time);				
@@ -53,8 +60,30 @@ public class AlarmController {
 		Alarm alarm = new Alarm();
 		alarm.setTime(alarmTime);
 		user.addAlarm(alarm);
-		userDao.save(user);				
-		return null;
+
+		userDao.save(user);	
+		userDao.flush();
+		
+		JSONObject json = new JSONObject();
+		try {
+			json.put("time", alarm.getSecondsForNextAlarm());
+			json.put("id", alarm.getId());
+		} catch (JSONException e) {			
+			LOGGER.error(e);
+		}
+		return new ModelAndView("jsonview", "root", json);
+	}
+	
+	@RequestMapping(value="/delete", method=RequestMethod.POST)
+	public ModelAndView delete(@RequestParam("alarmId") String id) {		
+		JSONObject json = new JSONObject();
+		try {
+			alarmDao.delete(id);
+			json.put("status", "success");
+		} catch (JSONException e) {
+			LOGGER.error(e);			
+		}
+		return  new ModelAndView("jsonview", "root", json);
 	}
 	
 	@Autowired
