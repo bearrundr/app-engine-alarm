@@ -47,7 +47,7 @@
 			$(document).ready(function () {
 				$(".delete").click(alarms.deleteAlarm);
 				$('#dialog').dialog({ autoOpen: false });
-				$('#datepicker').timepicker();
+				$('#datepicker').datetimepicker();
 				$('#add').click(function() {
 					$('#dialog').dialog('open');
 				});	
