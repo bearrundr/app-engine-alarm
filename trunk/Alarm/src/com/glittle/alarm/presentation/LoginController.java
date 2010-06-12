@@ -1,23 +1,24 @@
 package com.glittle.alarm.presentation;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.glittle.alarm.domain.model.User;
 import com.glittle.alarm.infrastructure.persistence.jpa.UserDao;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.glittle.alarm.domain.model.User;
 
 @Controller
 @RequestMapping(value="/login/")
 public class LoginController {
 	
 	private static final String LOGIN_PAGE = "login";
-	private static final Logger LOGGER = Logger.getLogger(LoginController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(LoginController.class);
 	
 	private UserDao userDao;
 	private UserService userService = UserServiceFactory.getUserService();
