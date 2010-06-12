@@ -8,6 +8,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +23,7 @@ import com.glittle.alarm.infrastructure.persistence.jpa.UserDao;
 @Controller
 @RequestMapping("/cron")
 public class CronController {
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(CronController.class);
 	private AlarmDao alarmDao;
 	private UserDao userDao;
 	
@@ -59,7 +61,9 @@ public class CronController {
             msg.setSubject("Ring Ring Ring");
             msg.setText(msgBody);
             Transport.send(msg);
-
+            
+            LOGGER.info("Sent mail to "+alarm.getUser().getEmail());
+            
         } catch(Exception e) {
         	throw new RuntimeException("Error when sending mail",e);        	
         }

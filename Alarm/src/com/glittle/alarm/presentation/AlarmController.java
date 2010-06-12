@@ -11,9 +11,10 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Propagation;
@@ -38,7 +39,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 @RequestMapping("/alarm/")
 public class AlarmController {
 
-	private static final Logger LOGGER = Logger.getLogger(AlarmController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AlarmController.class);
 	private static final String HOME_PAGE = "home";
 	
 	private UserService userService = UserServiceFactory.getUserService();
@@ -80,7 +81,7 @@ public class AlarmController {
 			json.put("time", alarm.getSecondsForNextAlarm());
 			json.put("id", alarm.getId());
 		} catch (JSONException e) {			
-			LOGGER.error(e);
+			LOGGER.error(e.getMessage());
 		}
 		return new ModelAndView("jsonview", "root", json);
 	}
@@ -92,7 +93,7 @@ public class AlarmController {
 			alarmDao.delete(id);
 			json.put("status", "success");
 		} catch (JSONException e) {
-			LOGGER.error(e);			
+			LOGGER.error(e.getMessage());			
 		}
 		return  new ModelAndView("jsonview", "root", json);
 	}
