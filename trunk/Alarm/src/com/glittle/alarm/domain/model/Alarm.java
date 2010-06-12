@@ -18,7 +18,7 @@ import org.ramanandi.framework.domain.model.jpa.BaseEntity;
 public class Alarm extends BaseEntity {
 
 	@Basic
-	@Temporal(TemporalType.TIME)
+	@Temporal(TemporalType.DATE)
 	private Date time;
 
 	@Basic
@@ -44,10 +44,6 @@ public class Alarm extends BaseEntity {
 		Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
 		DateTime current = new DateTime(cal.getTime());		
 		DateTime alarm = new DateTime(time);
-		alarm = alarm.withDate(current.getYear(), current.getMonthOfYear(), current.getDayOfMonth());
-		if(alarm.isBefore(current)) {
-			alarm = alarm.plusDays(1);
-		}
 		Interval interval = new Interval(current, alarm);
 		Long milli = interval.toDurationMillis();
 		

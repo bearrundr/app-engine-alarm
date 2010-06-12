@@ -1,9 +1,13 @@
 package com.glittle.alarm.presentation;
 
+import static com.google.appengine.api.labs.taskqueue.TaskOptions.Builder.url;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -24,9 +28,10 @@ import com.glittle.alarm.domain.model.Alarm;
 import com.glittle.alarm.domain.model.User;
 import com.glittle.alarm.infrastructure.persistence.jpa.AlarmDao;
 import com.glittle.alarm.infrastructure.persistence.jpa.UserDao;
+import com.google.appengine.api.labs.taskqueue.Queue;
+import com.google.appengine.api.labs.taskqueue.QueueFactory;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-
 
 
 @Controller
@@ -53,16 +58,22 @@ public class AlarmController {
 	@RequestMapping(value="/create", method=RequestMethod.POST)		
 	public ModelAndView create(@RequestParam("time") String time) throws ParseException {
 		System.out.println(time);		
-		DateFormat dt = new SimpleDateFormat("kk:mm");
+		DateFormat dt = new SimpleDateFormat("MM/dd/yyyy kk:mm");
 		dt.setTimeZone(TimeZone.getTimeZone("UTC"));
-		Date alarmTime =dt.parse(time);				
+		Date alarmTime = dt.parse(time);				
 		User user = getCurrentUser();
 		Alarm alarm = new Alarm();
 		alarm.setTime(alarmTime);
 		user.addAlarm(alarm);
-
+		
 		userDao.save(user);	
 		userDao.flush();
+		
+		
+		
+		Queue queue = QueueFactory.getDefaultQueue();
+		queue.add(url("/app/cron").countdownMillis(
+				getTimeDifference(alarmTime)).param("alarmId", alarm.getId()));
 		
 		JSONObject json = new JSONObject();
 		try {
@@ -98,5 +109,12 @@ public class AlarmController {
 	
 	public User getCurrentUser() {
 		return userDao.findByUserId(userService.getCurrentUser().getUserId());
+	}
+	
+	private long getTimeDifference(Date dt) {
+		Calendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+		Date current = cal.getTime();
+		long difference = dt.getTime() - current.getTime();
+		return difference;
 	}
 }

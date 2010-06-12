@@ -3,7 +3,7 @@
 	<head>
 		<style type="text/css">
 			.counter {
-			width: 130px;
+			width: 180px;
 			display: block;
 			margin-bottom: 40px;
 			}
@@ -33,9 +33,9 @@
 			
 			alarms.addAlarmSuccess = function(data) {
 				var counterId = "counter"+data.id; 
-				$("#alarms").append("<a id=\""+data.id+"\" href=\"#\" class=\"delete\">Delete this counter</a>");
+				$("#alarms").append("<a id=\""+data.id+"\" href=\"#\" class=\"delete\">Delete this alarm</a>");
 				$("#alarms").append("<div id=\""+counterId+"\" class=\"counter\">New counter</div>");
-				$("#"+counterId).countdown({until: +data.time, format:'HMS'});	
+				$("#"+counterId).countdown({until: +data.time, format:'DHMS'});	
 				$("#"+data.id).click(alarms.deleteAlarm);							
 			};
 
@@ -72,7 +72,7 @@
 					<div id="counter${alarm.id}" class="counter"></div>				
 					<script type="text/javascript">
 						$(function () {
-							$('#counter${alarm.id}').countdown({until: +${alarm.secondsForNextAlarm}, format:'HMS'});			
+							$('#counter${alarm.id}').countdown({until: +${alarm.secondsForNextAlarm}, format:'DHMS'});			
 						});						
 			</script>						
 			</c:forEach>
