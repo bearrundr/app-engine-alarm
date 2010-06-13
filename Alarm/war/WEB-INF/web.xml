@@ -39,6 +39,23 @@
 		<url-pattern>/app/*</url-pattern>
 	</filter-mapping>
 	
+ 	<security-constraint>
+        <web-resource-collection>
+            <url-pattern>/app/alarm/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>*</role-name>
+        </auth-constraint>
+    </security-constraint>	
+
+ 	<security-constraint>
+        <web-resource-collection>
+            <url-pattern>/app/cron</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>	
 
 	<welcome-file-list>
 		<welcome-file>app/login/</welcome-file>
