@@ -33,6 +33,7 @@ public class CronController {
 	@RequestMapping(method=RequestMethod.POST)
 	public void trigger(@RequestParam("alarmId") String alarmId) {
 		Alarm alarm = alarmDao.get(alarmId);
+		if(alarm == null) return ; //Alarm is deleted - do nothing
 		sendMail(alarm);
 		alarmDao.delete(alarm);
 	}
